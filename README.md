@@ -25,6 +25,10 @@ python -m venv venv
 ```
 source venv/Scripts/activate
 ```
+или:
+```
+source venv/bin/activate
+```
 Установить зависимости из файла requirements.txt:
 ```
 python -m pip install --upgrade pip
@@ -70,3 +74,5 @@ http://127.0.0.1:8000/api/v1/posts/?limit=1&offset=1
 }
 ```
 
+## Об авторе:
+Гейченко Михаил Александрович, студент 99 когорты курса Python-разработчик от платформы Яндекс.Практикум
