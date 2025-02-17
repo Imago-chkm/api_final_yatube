@@ -3,6 +3,7 @@ from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets, permissions, filters
+from rest_framework.pagination import LimitOffsetPagination
 
 from .serializers import (
     CommentSerializer,
@@ -12,6 +13,7 @@ from .serializers import (
 )
 from posts.models import Group, Follow, Post
 from .permissions import IsAuthorOrReadOnlyPermission
+from .pagination import PostViewSetPagination
 
 User = get_user_model()
 
@@ -60,7 +62,7 @@ class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-    pagination_class = None
+    pagination_class = PostViewSetPagination
 
     def perform_create(self, serializer):
         """Создает объект автора."""
@@ -80,12 +82,14 @@ class PostViewSet(viewsets.ModelViewSet):
 
 
 class FollowViewSet(viewsets.ModelViewSet):
-    queryset = Follow.objects.all()
     serializer_class = FollowSerializer
     permission_classes = [IsAuthenticated]
     pagination_class = None
-    # filter_backends = [filters.SearchFilter]
-    # search_fields = ('following__username',)
+    filter_backends = [filters.SearchFilter]
+    search_fields = ('following__username',)
+
+    def get_queryset(self):
+        return Follow.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
