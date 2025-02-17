@@ -105,7 +105,8 @@ REST_FRAMEWORK = {
     'DEFAULT_THROTTLE_RATES': {
         'user': '1000/day',
         'anon': '100/day',
-    }
+    },
+    'DEFAULT_PAGINATION_CLASS': 'api.pagination.CustomPagination'
 }
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

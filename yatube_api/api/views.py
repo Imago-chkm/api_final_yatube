@@ -1,6 +1,8 @@
+from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import viewsets, permissions
 
 from .serializers import (
     CommentSerializer,
@@ -8,11 +10,14 @@ from .serializers import (
     FollowSerializer,
     PostSerializer
 )
-from posts.models import Follow, Group, Post
+from posts.models import Group, Follow, Post
+
+User = get_user_model()
 
 
 class CommentViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = CommentSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, ]
 
     def get_post(self):
         """Получение поста."""
@@ -50,6 +55,7 @@ class GroupViewSet(viewsets.ReadOnlyModelViewSet):
 class PostViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, ]
 
     def perform_create(self, serializer):
         """Создает объект автора."""
@@ -68,6 +74,10 @@ class PostViewSet(viewsets.ReadOnlyModelViewSet):
         return super().perform_destroy(instance)
 
 
-class FollowViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Follow.objects.all()
+class FollowViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
     serializer_class = FollowSerializer
+    permission_classes = [IsAuthenticated, ]
+
+    def perform_create(self, serializer):
+        serializer.save(follower=self.request.user)
