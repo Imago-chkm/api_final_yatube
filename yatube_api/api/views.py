@@ -14,6 +14,8 @@ User = get_user_model()
 
 
 class CommentViewSet(viewsets.ModelViewSet):
+    """Вьюсет управления комментариями."""
+
     serializer_class = CommentSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     pagination_class = None
@@ -47,6 +49,8 @@ class CommentViewSet(viewsets.ModelViewSet):
 
 
 class GroupViewSet(viewsets.ReadOnlyModelViewSet):
+    """Вьюсет управления группами."""
+
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
     pagination_class = None
@@ -54,6 +58,8 @@ class GroupViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class PostViewSet(viewsets.ModelViewSet):
+    """Вьюсет управления постами."""
+
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
@@ -77,6 +83,8 @@ class PostViewSet(viewsets.ModelViewSet):
 
 
 class FollowViewSet(viewsets.ModelViewSet):
+    """Вьюсет управления подписчиками."""
+
     serializer_class = FollowSerializer
     permission_classes = [IsAuthenticated]
     pagination_class = None
