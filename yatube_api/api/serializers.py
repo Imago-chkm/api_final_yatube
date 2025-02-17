@@ -47,10 +47,9 @@ class GroupSerializer(serializers.ModelSerializer):
 class FollowSerializer(serializers.ModelSerializer):
     """Сериализатор для модели Follow."""
 
-    follower = SlugRelatedField(
+    user = SlugRelatedField(
         slug_field='username',
-        read_only=True,
-        default=serializers.CurrentUserDefault()
+        read_only=True
     )
     following = SlugRelatedField(
         slug_field='username',
@@ -58,14 +57,14 @@ class FollowSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        fields = ('follower', 'following')
+        fields = ('user', 'following')
         model = Follow
 
     def validate(self, data):
-        follower = self.context['request'].user
+        user = self.context['request'].user
         following = data['following']
         if Follow.objects.filter(
-            follower=follower,
+            user=user,
             following=following
         ).exists():
             raise ValidationError("Вы уже подписаны на этого пользователя.")

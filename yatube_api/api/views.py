@@ -11,14 +11,14 @@ from .serializers import (
     PostSerializer
 )
 from posts.models import Group, Follow, Post
-from .permissions import IsAuthorOrReadOnlyPermission
 
 User = get_user_model()
 
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly, ]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    pagination_class = None
 
     def get_post(self):
         """Получение поста."""
@@ -51,12 +51,14 @@ class CommentViewSet(viewsets.ModelViewSet):
 class GroupViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
+    pagination_class = None
 
 
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly, ]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    pagination_class = None
 
     def perform_create(self, serializer):
         """Создает объект автора."""
@@ -76,9 +78,9 @@ class PostViewSet(viewsets.ModelViewSet):
 
 
 class FollowViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
+    queryset = Follow.objects.all()
     serializer_class = FollowSerializer
-    permission_classes = [IsAuthenticated, ]
+    permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
-        serializer.save(follower=self.request.user)
+        serializer.save(user=self.request.user)
